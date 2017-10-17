@@ -1,12 +1,18 @@
 app:
     build: .
     environment:
-        REALM: prod
+        REALM: ngrok_prod
         REDIS_URL: "//redis:6379"
+    volumes:
+        - ./requestbin:/opt/requestbin/requestbin
     links:
         - redis
     ports:
         - "8000:8000"
-
+ngrok:
+    image: "jacktan1991/ngrok-sunny"
+    command: 83fda355ea04cdc2
+    links:
+      - app:requestbin
 redis:
     image: redis

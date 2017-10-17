@@ -28,6 +28,36 @@ REDIS_PREFIX = "requestbin"
 
 BUGSNAG_KEY = ""
 
+if REALM == 'ngrok_prod':
+    DEBUG = False
+    ENABLE_CORS = True
+    ROOT_URL = "http://requestbin.free.ngrok.cc"
+
+    FLASK_SESSION_SECRET_KEY = os.environ.get("SESSION_SECRET_KEY", FLASK_SESSION_SECRET_KEY)
+
+    STORAGE_BACKEND = "requestbin.storage.redis.RedisStorage"
+
+    REDIS_URL = os.environ.get("REDIS_URL")
+    url_parts = urlparse.urlparse(REDIS_URL)
+    REDIS_HOST = url_parts.hostname
+    REDIS_PORT = url_parts.port
+    REDIS_PASSWORD = url_parts.password
+    REDIS_DB = url_parts.fragment
+    BUGSNAG_KEY = os.environ.get("BUGSNAG_KEY", BUGSNAG_KEY)
+
+    IGNORE_HEADERS = """
+X-Varnish
+X-Forwarded-For
+X-Heroku-Dynos-In-Use
+X-Request-Start
+X-Heroku-Queue-Wait-Time
+X-Heroku-Queue-Depth
+X-Real-Ip
+X-Forwarded-Proto
+X-Via
+X-Forwarded-Port
+""".split("\n")[1:-1]
+
 if REALM == 'prod':
     DEBUG = False
     ROOT_URL = "http://requestb.in"
