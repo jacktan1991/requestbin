@@ -8,8 +8,10 @@ RUN apk update && apk upgrade && \
         # sys/queue.h
         bsd-compat-headers \
         # event.h
-        libevent-dev \
-    && rm -rf /var/cache/apk/*
+        libevent-dev && \
+    apk add -U ca-certificates libffi libstdc++ && \
+    apk add --virtual build-deps build-base libffi-dev && \
+    rm -rf /var/cache/apk/*
 
 # want all dependencies first so that if it's just a code change, don't have to
 # rebuild as much of the container
