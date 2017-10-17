@@ -46,7 +46,11 @@ def full_endpoint_api(return_dict=False):
     if request.method not in method_v:
         return httpbin.status_code(405)
 
-    dict_value = httpbin.get_dict(*method_v[request.method])
+    dict_value = {
+        "code" 0,
+        "msg": "ok",
+        "data": httpbin.get_dict(*method_v[request.method])
+    }
 
     if return_dict:
         return dict_value
