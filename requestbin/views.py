@@ -1,4 +1,5 @@
 import urllib
+import httpbin
 from flask import session, redirect, url_for, escape, request, render_template, make_response
 
 from requestbin import app, db
@@ -26,6 +27,32 @@ def expand_recent_bins():
             session.modified = True
     return recent
 
+
+def full_endpoint_api(return_dict=False):
+    """
+    return json response accord http method using httpbin
+    """
+    FOR_GET = ('url', 'args', 'headers', 'origin')
+    FOR_NONE_GET = ('url', 'args', 'form', 'data', 'origin', 'headers', 'files', 'json')
+    method_v = {
+        'GET': FOR_GET,
+        'HEAD': FOR_GET,
+        "POST": FOR_NONE_GET,
+        "PUT": FOR_NONE_GET,
+        "PATCH": FOR_NONE_GET,
+        "DELETE": FOR_NONE_GET,
+    }
+
+    if request.method not in method_v:
+        return httpbin.status_code(405)
+
+    dict_value = httpbin.get_dict(*method_v[request.method])
+
+    if return_dict:
+        return dict_value
+    return httpbin.jsonify(dict_value)
+
+
 @app.endpoint('views.home')
 def home():
     return render_template('home.html', recent=expand_recent_bins())
@@ -46,7 +73,7 @@ def bin(name):
             base_url=request.scheme+'://'+request.host)
     else:
         db.create_request(bin, request)
-        resp = make_response("ok\n")
+        resp = full_endpoint_api()
         resp.headers['Sponsored-By'] = "https://www.runscope.com"
         return resp
 
