@@ -47,7 +47,7 @@ def full_endpoint_api(return_dict=False):
         return httpbin.status_code(405)
 
     dict_value = {
-        "code" 0,
+        "code": 0,
         "msg": "ok",
         "data": httpbin.get_dict(*method_v[request.method])
     }
